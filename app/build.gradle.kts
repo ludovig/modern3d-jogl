@@ -109,3 +109,9 @@ tasks.register<JavaExec>("aspect_ratio") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut04.AspectRatio")
 }
+tasks.register<JavaExec>("overlap_no_depth") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut05.OverlapNoDepth")
+}

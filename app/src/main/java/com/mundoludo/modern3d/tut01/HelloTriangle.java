@@ -1,9 +1,6 @@
 package com.mundoludo.modern3d.tut01;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.util.GLBuffers;
 
 import java.nio.ByteBuffer;
@@ -17,7 +14,6 @@ import static com.jogamp.opengl.GL.GL_FLOAT;
 import static com.jogamp.opengl.GL.GL_STATIC_DRAW;
 import static com.jogamp.opengl.GL.GL_TRIANGLES;
 import static com.jogamp.opengl.GL2ES2.*;
-import static com.jogamp.opengl.GL2ES3.GL_COLOR;
 import static com.jogamp.opengl.GL3ES3.GL_GEOMETRY_SHADER;
 
 import com.mundoludo.modern3d.framework.Framework;

@@ -22,3 +22,5 @@ Status:
   - [x] Perspective Projection
   - [x] The Matrix has You
   - [x] Aspect of the World
+- [x] Chapter 5
+  - [x] Multiple Objects in OpenGL

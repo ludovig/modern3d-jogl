@@ -40,5 +40,8 @@ public class App {
         System.out.println("gradlew shader_perspective");
         System.out.println("gradlew matrix_perspective");
         System.out.println("gradlew aspect_ratio");
+        System.out.println("\nTutorial 05");
+        System.out.println("-----------");
+        System.out.println("gradlew overlap_no_depth");
     }
 }
