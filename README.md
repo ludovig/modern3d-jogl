@@ -5,7 +5,13 @@ Current maintenance by Pavel Rojtberg at https://paroj.github.io/gltut/ with git
 
 Port of Giuseppe Barbieri (elect86) from jvm-graphics-labs at https://github.com/jvm-graphics-labs/modern-jogl-examples was used as a starting point
 
-Status:
+#### How to use
+Get a list of available tutorials with command below
+```
+./gradlew run
+```
+
+#### Status:
 
 - [x] Chapter 1
   - [x] Hello, Triangle!
@@ -24,3 +30,4 @@ Status:
   - [x] Aspect of the World
 - [x] Chapter 5
   - [x] Multiple Objects in OpenGL
+  - [x] Optimization : Base Vertex

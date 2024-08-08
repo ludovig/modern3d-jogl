@@ -115,3 +115,9 @@ tasks.register<JavaExec>("overlap_no_depth") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut05.OverlapNoDepth")
 }
+tasks.register<JavaExec>("base_vertex_overlap") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut05.BaseVertexOverlap")
+}
