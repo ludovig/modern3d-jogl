@@ -12,7 +12,9 @@ import static com.jogamp.opengl.GL.GL_ARRAY_BUFFER;
 import static com.jogamp.opengl.GL.GL_CULL_FACE;
 import static com.jogamp.opengl.GL.GL_BACK;
 import static com.jogamp.opengl.GL.GL_CW;
+import static com.jogamp.opengl.GL.GL_DEPTH_TEST;
 import static com.jogamp.opengl.GL.GL_FLOAT;
+import static com.jogamp.opengl.GL.GL_LEQUAL;
 import static com.jogamp.opengl.GL.GL_TRIANGLES;
 import static com.jogamp.opengl.GL.GL_STATIC_DRAW;
 import static com.jogamp.opengl.GL2ES2.*;
@@ -83,10 +85,10 @@ public class OverlapNoDepth extends Framework {
 
     private float[] vertexData = {
 	//Object 1 positions
-    LEFT_EXTENT,	TOP_EXTENT,	    REAR_EXTENT,
-    LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
-    RIGHT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
-    RIGHT_EXTENT,	TOP_EXTENT,	    REAR_EXTENT,
+        LEFT_EXTENT,	TOP_EXTENT,	    REAR_EXTENT,
+        LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
+        RIGHT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
+        RIGHT_EXTENT,	TOP_EXTENT,	    REAR_EXTENT,
 
 	LEFT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT,
 	LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,

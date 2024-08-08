@@ -44,5 +44,6 @@ public class App {
         System.out.println("-----------");
         System.out.println("gradlew overlap_no_depth");
         System.out.println("gradlew base_vertex_overlap");
+        System.out.println("gradlew depth_buffer");
     }
 }

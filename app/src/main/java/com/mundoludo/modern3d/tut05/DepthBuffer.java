@@ -19,10 +19,10 @@ import static com.jogamp.opengl.GL2ES2.*;
 
 import com.mundoludo.modern3d.framework.Framework;
 
-public class BaseVertexOverlap extends Framework {
+public class DepthBuffer extends Framework {
 
     public static void main(String[] args) {
-        new BaseVertexOverlap().setup("Tutorial 05 - Base Vertex Overlap");
+        new DepthBuffer().setup("Tutorial 05 - Depth Buffer");
     }
 
     private int theProgram;
@@ -242,6 +242,10 @@ public class BaseVertexOverlap extends Framework {
         gl.glEnable(GL_CULL_FACE);
         gl.glCullFace(GL_BACK);
         gl.glFrontFace(GL_CW);
+        gl.glEnable(GL_DEPTH_TEST);
+        gl.glDepthMask(true);
+        gl.glDepthFunc(GL_LEQUAL);
+        gl.glDepthRange(0.0f, 1.0f);
     }
 
 
@@ -249,7 +253,8 @@ public class BaseVertexOverlap extends Framework {
     public void display(GL3 gl) {
 
         gl.glClearColor(0, 0, 0, 0);
-        gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
+        gl.glClearDepth(1.0f);
+        gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 
         gl.glUseProgram(theProgram);
 
@@ -257,7 +262,7 @@ public class BaseVertexOverlap extends Framework {
         gl.glUniform3f(offsetUniform, 0f, 0f, 0f);
         gl.glDrawElements(GL_TRIANGLES, indexData.length, GL_UNSIGNED_SHORT, 0);
 
-        gl.glUniform3f(offsetUniform, 0.0f, 0.0f, -1f);
+        gl.glUniform3f(offsetUniform, 0.0f, 0.0f, -1.0f);
         gl.glDrawElementsBaseVertex(GL_TRIANGLES, indexData.length, GL_UNSIGNED_SHORT, 0, numberOfVertices / 2);
 
         gl.glBindVertexArray(0);
