@@ -31,3 +31,5 @@ Get a list of available tutorials with command below
 - [x] Chapter 5
   - [x] Multiple Objects in OpenGL
   - [x] Optimization : Base Vertex
+  - [x] Overlap and Depth Buffering
+  - [x] Boundaries and Clipping

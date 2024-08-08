@@ -127,3 +127,9 @@ tasks.register<JavaExec>("depth_buffer") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut05.DepthBuffer")
 }
+tasks.register<JavaExec>("vertex_clipping") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut05.VertexClipping")
+}
