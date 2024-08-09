@@ -15,6 +15,8 @@ repositories {
     mavenCentral()
     // JOGL
     maven { url  = uri("https://jogamp.org/deployment/maven") }
+    // glm
+    maven("https://raw.githubusercontent.com/kotlin-graphics/mary/master")
 }
 
 dependencies {
@@ -29,6 +31,10 @@ dependencies {
     // JOGL
     implementation("org.jogamp.gluegen:gluegen-rt-main:2.4.0")
     implementation("org.jogamp.jogl:jogl-all-main:2.4.0")
+
+    // glm
+    implementation("io.github.kotlin-graphics:glm:0.9.9.1-12")
+    implementation("io.github.kotlin-graphics:kool:0.9.79")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -132,4 +138,10 @@ tasks.register<JavaExec>("vertex_clipping") {
     javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut05.VertexClipping")
+}
+tasks.register<JavaExec>("translation") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut06.Translation")
 }

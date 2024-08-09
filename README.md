@@ -3,7 +3,7 @@ Java Port of  "Learning Modern 3D Graphic Programming" by J.L.McKesson tutorials
 
 Current maintenance by Pavel Rojtberg at https://paroj.github.io/gltut/ with github repository here https://github.com/paroj/gltut
 
-Port of Giuseppe Barbieri (elect86) from jvm-graphics-labs at https://github.com/jvm-graphics-labs/modern-jogl-examples was used as a starting point
+Port of Giuseppe Barbieri (elect86) from jvm-graphics-labs at https://github.com/jvm-graphics-labs/modern-jogl-examples was used as a starting point (and later)
 
 #### How to use
 Get a list of available tutorials with command below
@@ -33,3 +33,5 @@ Get a list of available tutorials with command below
   - [x] Optimization : Base Vertex
   - [x] Overlap and Depth Buffering
   - [x] Boundaries and Clipping
+- [x] Chapter 6
+  - [x] Translation
