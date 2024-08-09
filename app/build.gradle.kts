@@ -145,3 +145,9 @@ tasks.register<JavaExec>("translation") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut06.Translation")
 }
+tasks.register<JavaExec>("scale") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut06.Scale")
+}

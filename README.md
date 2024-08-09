@@ -35,3 +35,4 @@ Get a list of available tutorials with command below
   - [x] Boundaries and Clipping
 - [x] Chapter 6
   - [x] Translation
+  - [x] Scale

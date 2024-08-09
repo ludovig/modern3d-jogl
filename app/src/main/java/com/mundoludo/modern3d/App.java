@@ -49,5 +49,6 @@ public class App {
         System.out.println("\nTutorial 06");
         System.out.println("-----------");
         System.out.println("gradlew translation");
+        System.out.println("gradlew scale");
     }
 }
