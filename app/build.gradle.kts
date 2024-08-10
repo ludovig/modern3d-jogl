@@ -157,3 +157,9 @@ tasks.register<JavaExec>("rotation") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut06.Rotation")
 }
+tasks.register<JavaExec>("hierarchy") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut06.Hierarchy")
+}

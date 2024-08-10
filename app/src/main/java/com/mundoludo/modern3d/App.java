@@ -51,5 +51,6 @@ public class App {
         System.out.println("gradlew translation");
         System.out.println("gradlew scale");
         System.out.println("gradlew rotation");
+        System.out.println("gradlew hierarchy");
     }
 }
