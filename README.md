@@ -36,3 +36,4 @@ Get a list of available tutorials with command below
 - [x] Chapter 6
   - [x] Translation
   - [x] Scale
+  - [x] Rotation
