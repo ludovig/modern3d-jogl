@@ -37,3 +37,4 @@ Get a list of available tutorials with command below
   - [x] Translation
   - [x] Scale
   - [x] Rotation
+  - [x] Hierarchy

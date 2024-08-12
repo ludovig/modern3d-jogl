@@ -1,5 +1,6 @@
 package com.mundoludo.modern3d.tut06;
 
+import com.jogamp.newt.event.*;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.util.GLBuffers;
 
@@ -486,6 +487,57 @@ public class Hierarchy extends Framework {
 
             modelToCameraStack.Pop();
         }
+
+        private final float STANDARD_ANGLE_INCREMENT = 11.25f;
+        private final float SMALL_ANGLE_INCREMENT = 9.0f;
+
+        private void AdjBase(boolean bIncrement)
+        {
+            angBase += bIncrement ? STANDARD_ANGLE_INCREMENT : -STANDARD_ANGLE_INCREMENT;
+            angBase = angBase % 360.0f;
+        }
+
+        private void AdjUpperArm(boolean bIncrement)
+        {
+            angUpperArm += bIncrement ? STANDARD_ANGLE_INCREMENT : -STANDARD_ANGLE_INCREMENT;
+            angUpperArm = Clamp(angUpperArm, -90.0f, 0.0f);
+        }
+
+        private void AdjLowerArm(boolean bIncrement)
+        {
+            angLowerArm += bIncrement ? STANDARD_ANGLE_INCREMENT : -STANDARD_ANGLE_INCREMENT;
+            angLowerArm = Clamp(angLowerArm, 0.0f, 146.25f);
+        }
+
+        private void AdjWristPitch(boolean bIncrement)
+        {
+            angWristPitch += bIncrement ? STANDARD_ANGLE_INCREMENT : -STANDARD_ANGLE_INCREMENT;
+            angWristPitch = Clamp(angWristPitch, 0.0f, 90.0f);
+        }
+
+        private void AdjWristRoll(boolean bIncrement)
+        {
+            angWristRoll += bIncrement ? STANDARD_ANGLE_INCREMENT : -STANDARD_ANGLE_INCREMENT;
+            angWristRoll = angWristRoll % 360.0f;
+        }
+
+        private void AdjFingerOpen(boolean bIncrement)
+        {
+            angFingerOpen += bIncrement ? SMALL_ANGLE_INCREMENT : -SMALL_ANGLE_INCREMENT;
+            angFingerOpen = Clamp(angFingerOpen, 9.0f, 180.0f);
+        }
+
+        private void WritePose()
+        {
+            System.out.println("angBase:\t" + angBase);
+            System.out.println("angUpperArm:\t" + angUpperArm);
+            System.out.println("angLowerArm:\t" + angLowerArm);
+            System.out.println("angWristPitch:\t" + angWristPitch);
+            System.out.println("angWristRoll:\t" + angWristRoll);
+            System.out.println("angFingerOpen:\t" + angFingerOpen);
+            System.out.println();
+        }
+
     }
 
     @Override
@@ -538,5 +590,26 @@ public class Hierarchy extends Framework {
         gl.glDeleteBuffers(1, vertexBufferObject);
         gl.glDeleteBuffers(1, indexBufferObject);
         gl.glDeleteVertexArrays(1, vao);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+        super.keyPressed(keyEvent);
+
+        switch (keyEvent.getKeyCode()) {
+            case KeyEvent.VK_A: g_armature.AdjBase(true); break;
+            case KeyEvent.VK_D: g_armature.AdjBase(false); break;
+            case KeyEvent.VK_W: g_armature.AdjUpperArm(false); break;
+            case KeyEvent.VK_S: g_armature.AdjUpperArm(true); break;
+            case KeyEvent.VK_R: g_armature.AdjLowerArm(false); break;
+            case KeyEvent.VK_F: g_armature.AdjLowerArm(true); break;
+            case KeyEvent.VK_T: g_armature.AdjWristPitch(false); break;
+            case KeyEvent.VK_G: g_armature.AdjWristPitch(true); break;
+            case KeyEvent.VK_Z: g_armature.AdjWristRoll(true); break;
+            case KeyEvent.VK_C: g_armature.AdjWristRoll(false); break;
+            case KeyEvent.VK_Q: g_armature.AdjFingerOpen(true); break;
+            case KeyEvent.VK_E: g_armature.AdjFingerOpen(false); break;
+            case KeyEvent.VK_SPACE: g_armature.WritePose(); break;
+        }
     }
 }
