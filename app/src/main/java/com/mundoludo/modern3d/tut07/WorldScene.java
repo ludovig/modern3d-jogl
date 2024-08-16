@@ -4,6 +4,7 @@ import com.jogamp.newt.event.*;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.util.GLBuffers;
 
+import glm_.Java;
 import glm_.mat4x4.Mat4;
 import glm_.vec3.Vec3;
 
@@ -453,6 +454,25 @@ public class WorldScene extends Framework {
 
             DrawParthenon(gl, modelMatrix);
         }
+
+        if (g_bDrawLookatPoint) {
+            gl.glDisable(GL_DEPTH_TEST);
+            Mat4 identity = new Mat4(1.0f);
+
+            Vec3 cameraAimVec = g_camTarget.minus(camPos);
+
+            modelMatrix.push();
+            modelMatrix.translate(new Vec3(0.0f, 0.0f, - Java.glm.length(cameraAimVec)));
+            modelMatrix.scale(new Vec3(1.0f, 1.0f, 1.0f));
+    
+            gl.glUseProgram(ObjectColor.theProgram);
+            gl.glUniformMatrix4fv(ObjectColor.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
+            gl.glUniformMatrix4fv(ObjectColor.worldToCameraMatrixUnif, 1, false, identity.to(MatBuffer));
+            g_pCubeColorMesh.render(gl);
+            gl.glUseProgram(0);
+            modelMatrix.pop();
+            gl.glEnable(GL_DEPTH_TEST);
+        }
     }
 
     @Override
@@ -536,6 +556,11 @@ public class WorldScene extends Framework {
                 break;
             case KeyEvent.VK_U:
                 g_sphereCamRelPos.setZ(g_sphereCamRelPos.getZ() + (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_SPACE:
+                g_bDrawLookatPoint = ! g_bDrawLookatPoint;
+		System.out.printf("Target: %f, %f, %f\n", g_camTarget.getX(), g_camTarget.getY(), g_camTarget.getZ());
+		System.out.printf("Position: %f, %f, %f\n", g_sphereCamRelPos.getX(), g_sphereCamRelPos.getY(), g_sphereCamRelPos.getZ());
                 break;
         }
 
