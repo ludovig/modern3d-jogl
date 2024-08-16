@@ -163,3 +163,9 @@ tasks.register<JavaExec>("hierarchy") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut06.Hierarchy")
 }
+tasks.register<JavaExec>("world_scene") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut07.WorldScene")
+}

@@ -12,20 +12,7 @@ import com.jogamp.newt.opengl.GLWindow;
 
 import com.jogamp.opengl.util.*;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
-
-import static com.jogamp.opengl.GL.GL_ARRAY_BUFFER;
-import static com.jogamp.opengl.GL.GL_FALSE;
-import static com.jogamp.opengl.GL.GL_FLOAT;
-import static com.jogamp.opengl.GL.GL_STATIC_DRAW;
-import static com.jogamp.opengl.GL.GL_TRIANGLES;
-import static com.jogamp.opengl.GL2ES2.*;
-import static com.jogamp.opengl.GL2ES3.GL_COLOR;
-import static com.jogamp.opengl.GL3ES3.GL_GEOMETRY_SHADER;
-
 
 public class Framework implements GLEventListener, KeyListener {
 
@@ -165,5 +152,11 @@ public class Framework implements GLEventListener, KeyListener {
                 window.destroy();
             }
         }).start();
+    }
+
+    public static float degToRad(float angDeg)
+    {
+        final float degToRad = (float) Math.PI * 2.0f / 360.0f;
+        return angDeg * degToRad;
     }
 }

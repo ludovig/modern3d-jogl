@@ -14,15 +14,9 @@ public class MatrixStack {
     private Stack<Mat4> matrices = new Stack<>();
     private Mat4 currMat = new Mat4(1f);
 
-    private float degToRad(float angDeg)
-    {
-        final float degToRad = (float) Math.PI * 2.0f / 360.0f;
-        return angDeg * degToRad;
-    }
-
     private Mat3 rotationX(float angDeg)
     {
-        float angRad = degToRad(angDeg);
+        float angRad = Framework.degToRad(angDeg);
         float fCos = (float) Math.cos(angRad);
         float fSin = (float) Math.sin(angRad);
 
@@ -34,7 +28,7 @@ public class MatrixStack {
     }
 
     private Mat3 rotationY(float angDeg) {
-        float angRad = degToRad(angDeg);
+        float angRad = Framework.degToRad(angDeg);
         float fCos = (float) Math.cos(angRad);
         float fSin = (float) Math.sin(angRad);
 
@@ -46,7 +40,7 @@ public class MatrixStack {
     }
 
     private Mat3 rotationZ(float angDeg) {
-        float angRad = degToRad(angDeg);
+        float angRad = Framework.degToRad(angDeg);
         float fCos = (float) Math.cos(angRad);
         float fSin = (float) Math.sin(angRad);
 
@@ -90,7 +84,7 @@ public class MatrixStack {
     }
 
     public Mat4 perspective(float degFov, float aspectRatio, float zNear, float zFar) {
-        float radFov = degToRad(degFov);
+        float radFov = Framework.degToRad(degFov);
         Mat4 perspectiveMat = Java.glm.perspective(radFov, aspectRatio, zNear, zFar);
         currMat.timesAssign(perspectiveMat);
         return currMat;
