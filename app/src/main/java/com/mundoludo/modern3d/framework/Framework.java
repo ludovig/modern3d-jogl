@@ -159,4 +159,15 @@ public class Framework implements GLEventListener, KeyListener {
         final float degToRad = (float) Math.PI * 2.0f / 360.0f;
         return angDeg * degToRad;
     }
+
+    public static float clamp(float fValue, float fMinValue, float fMaxValue)
+    {
+        if(fValue < fMinValue)
+            return fMinValue;
+
+        if(fValue > fMaxValue)
+            return fMaxValue;
+
+        return fValue;
+    }
 }

@@ -184,6 +184,205 @@ public class WorldScene extends Framework {
         }
     }
 
+    private float g_fColumnBaseHeight = 0.25f;
+
+    //Columns are 1x1 in the X/Z, and fHieght units in the Y.
+    void DrawColumn(GL3 gl, MatrixStack modelMatrix, float fHeight)
+    {
+        //Draw the bottom of the column.
+        {
+            modelMatrix.push();
+
+            modelMatrix.scale(new Vec3(1.0f, g_fColumnBaseHeight, 1.0f));
+            modelMatrix.translate(new Vec3(0.0f, 0.5f, 0.0f));
+
+            gl.glUseProgram(UniformColorTint.theProgram);
+            gl.glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
+            gl.glUniform4f(UniformColorTint.baseColorUnif, 1.0f, 1.0f, 1.0f, 1.0f);
+            g_pCubeTintMesh.render(gl);
+            gl.glUseProgram(0);
+
+            modelMatrix.pop();
+        }
+
+        //Draw the top of the column.
+        {
+            modelMatrix.push();
+
+            modelMatrix.translate(new Vec3(0.0f, fHeight - g_fColumnBaseHeight, 0.0f));
+            modelMatrix.scale(new Vec3(1.0f, g_fColumnBaseHeight, 1.0f));
+            modelMatrix.translate(new Vec3(0.0f, 0.5f, 0.0f));
+
+            gl.glUseProgram(UniformColorTint.theProgram);
+            gl.glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
+            gl.glUniform4f(UniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
+            g_pCubeTintMesh.render(gl);
+            gl.glUseProgram(0);
+
+            modelMatrix.pop();
+        }
+
+        //Draw the main column.
+        {
+            modelMatrix.push();
+
+            modelMatrix.translate(new Vec3(0.0f, g_fColumnBaseHeight, 0.0f));
+            modelMatrix.scale(new Vec3(0.8f, fHeight - (g_fColumnBaseHeight * 2.0f), 0.8f));
+            modelMatrix.translate(new Vec3(0.0f, 0.5f, 0.0f));
+
+            gl.glUseProgram(UniformColorTint.theProgram);
+            gl.glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
+            gl.glUniform4f(UniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
+            g_pCylinderMesh.render(gl);
+            gl.glUseProgram(0);
+
+            modelMatrix.pop();
+        }
+    }
+
+    void DrawParthenon(GL3 gl, MatrixStack modelMatrix)
+    {
+        final float g_fParthenonWidth = 14.0f;
+        final float g_fParthenonLength = 20.0f;
+        final float g_fParthenonColumnHeight = 5.0f;
+        final float g_fParthenonBaseHeight = 1.0f;
+        final float g_fParthenonTopHeight = 2.0f;
+
+        //Draw base.
+        {
+            modelMatrix.push();
+
+            modelMatrix.scale(new Vec3(g_fParthenonWidth, g_fParthenonBaseHeight, g_fParthenonLength));
+            modelMatrix.translate(new Vec3(0.0f, 0.5f, 0.0f));
+
+            gl.glUseProgram(UniformColorTint.theProgram);
+            gl.glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
+            gl.glUniform4f(UniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
+            g_pCubeTintMesh.render(gl);
+            gl.glUseProgram(0);
+
+            modelMatrix.pop();
+        }
+
+        //Draw top.
+        {
+            modelMatrix.push();
+
+            modelMatrix.translate(new Vec3(0.0f, g_fParthenonColumnHeight + g_fParthenonBaseHeight, 0.0f));
+            modelMatrix.scale(new Vec3(g_fParthenonWidth, g_fParthenonTopHeight, g_fParthenonLength));
+            modelMatrix.translate(new Vec3(0.0f, 0.5f, 0.0f));
+
+            gl.glUseProgram(UniformColorTint.theProgram);
+            gl.glUniformMatrix4fv(UniformColorTint.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
+            gl.glUniform4f(UniformColorTint.baseColorUnif, 0.9f, 0.9f, 0.9f, 0.9f);
+            g_pCubeTintMesh.render(gl);
+            gl.glUseProgram(0);
+
+            modelMatrix.pop();
+        }
+
+        //Draw columns.
+        final float fFrontZVal = (g_fParthenonLength / 2.0f) - 1.0f;
+        final float fRightXVal = (g_fParthenonWidth / 2.0f) - 1.0f;
+
+        for(int iColumnNum = 0; iColumnNum < (int) (g_fParthenonWidth / 2.0f); iColumnNum++)
+        {
+            {
+                modelMatrix.push();
+                modelMatrix.translate(new Vec3(
+                    (2.0f * iColumnNum) - (g_fParthenonWidth / 2.0f) + 1.0f,
+                    g_fParthenonBaseHeight,
+                    fFrontZVal
+                ));
+
+                DrawColumn(gl, modelMatrix, g_fParthenonColumnHeight);
+
+                modelMatrix.pop();
+            }
+            {
+                modelMatrix.push();
+                modelMatrix.translate(new Vec3(
+                    (2.0f * iColumnNum) - (g_fParthenonWidth / 2.0f) + 1.0f,
+                    g_fParthenonBaseHeight,
+                    -fFrontZVal
+                ));
+
+                DrawColumn(gl, modelMatrix, g_fParthenonColumnHeight);
+
+                modelMatrix.pop();
+            }
+        }
+
+        //Don't draw the first or last columns, since they've been drawn already.
+        for(int iColumnNum = 1; iColumnNum < (int) ((g_fParthenonLength - 2.0f) / 2.0f); iColumnNum++)
+        {
+            {
+                modelMatrix.push();
+                modelMatrix.translate(new Vec3(
+                    fRightXVal,
+                    g_fParthenonBaseHeight,
+                    (2.0f * iColumnNum) - (g_fParthenonLength / 2.0f) + 1.0f
+                ));
+
+                DrawColumn(gl, modelMatrix, g_fParthenonColumnHeight);
+
+                modelMatrix.pop();
+            }
+            {
+                modelMatrix.push();
+                modelMatrix.translate(new Vec3(
+                    -fRightXVal,
+                    g_fParthenonBaseHeight,
+                    (2.0f * iColumnNum) - (g_fParthenonLength / 2.0f) + 1.0f
+                ));
+
+                DrawColumn(gl, modelMatrix, g_fParthenonColumnHeight);
+
+                modelMatrix.pop();
+            }
+        }
+
+        //Draw interior.
+        {
+            modelMatrix.push();
+
+            modelMatrix.translate(new Vec3(0.0f, 1.0f, 0.0f));
+            modelMatrix.scale(new Vec3(
+                g_fParthenonWidth - 6.0f,
+                g_fParthenonColumnHeight,
+                g_fParthenonLength - 6.0f
+            ));
+            modelMatrix.translate(new Vec3(0.0f, 0.5f, 0.0f));
+
+            gl.glUseProgram(ObjectColor.theProgram);
+            gl.glUniformMatrix4fv(ObjectColor.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
+            g_pCubeColorMesh.render(gl);
+            gl.glUseProgram(0);
+
+            modelMatrix.pop();
+        }
+
+        //Draw headpiece.
+        {
+            modelMatrix.push();
+
+            modelMatrix.translate(new Vec3(
+                0.0f,
+                g_fParthenonColumnHeight + g_fParthenonBaseHeight + (g_fParthenonTopHeight / 2.0f),
+                g_fParthenonLength / 2.0f
+            ));
+            modelMatrix.rotateX(-135.0f);
+            modelMatrix.rotateY(45.0f);
+
+            gl.glUseProgram(ObjectColor.theProgram);
+            gl.glUniformMatrix4fv(ObjectColor.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
+            g_pCubeColorMesh.render(gl);
+            gl.glUseProgram(0);
+
+            modelMatrix.pop();
+        }
+    }
+
     private boolean g_bDrawLookatPoint = false;
     Vec3 g_camTarget = new Vec3(0.0f, 0.4f, 0.0f);
     //In spherical coordinates.
@@ -246,6 +445,14 @@ public class WorldScene extends Framework {
         }
 
         DrawForest(gl, modelMatrix);
+
+        //Draw the building.
+        {
+            modelMatrix.push();
+            modelMatrix.translate(new Vec3(20.0f, 0.0f, -10.0f));
+
+            DrawParthenon(gl, modelMatrix);
+        }
     }
 
     @Override
@@ -289,7 +496,52 @@ public class WorldScene extends Framework {
         super.keyPressed(keyEvent);
 
         switch (keyEvent.getKeyCode()) {
+            case KeyEvent.VK_W:
+                g_camTarget.setZ(g_camTarget.getZ() - (keyEvent.isShiftDown() ?  0.4f :  4.0f));
+                break;
+            case KeyEvent.VK_S:
+                g_camTarget.setZ(g_camTarget.getZ() + (keyEvent.isShiftDown() ? 0.4f : 4.0f));
+                break;
+
+            case KeyEvent.VK_D:
+                g_camTarget.setX(g_camTarget.getX() + (keyEvent.isShiftDown() ? 0.4f : 4.0f));
+                break;
+            case KeyEvent.VK_A:
+                g_camTarget.setX(g_camTarget.getX() - (keyEvent.isShiftDown() ? 0.4f : 4.0f));
+                break;
+
+            case KeyEvent.VK_E:
+                g_camTarget.setY(g_camTarget.getY() - (keyEvent.isShiftDown() ? 0.4f : 4.0f));
+                break;
+            case KeyEvent.VK_Q:
+                g_camTarget.setY(g_camTarget.getY() + (keyEvent.isShiftDown() ? 0.4f : 4.0f));
+                break;
+
+            case KeyEvent.VK_I:
+                g_sphereCamRelPos.setY(g_sphereCamRelPos.getY() - (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_K:
+                g_sphereCamRelPos.setY(g_sphereCamRelPos.getY() + (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+
+            case KeyEvent.VK_J:
+                g_sphereCamRelPos.setX(g_sphereCamRelPos.getX() - (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_L:
+                g_sphereCamRelPos.setX(g_sphereCamRelPos.getX() + (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+
+            case KeyEvent.VK_O:
+                g_sphereCamRelPos.setZ(g_sphereCamRelPos.getZ() - (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_U:
+                g_sphereCamRelPos.setZ(g_sphereCamRelPos.getZ() + (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
         }
+
+        g_sphereCamRelPos.setY(Framework.clamp(g_sphereCamRelPos.getY(), -78.75f, -1.0f));
+        g_camTarget.setY(Framework.clamp(g_camTarget.getY(), 0.0f, g_camTarget.getY()));
+        g_sphereCamRelPos.setZ(Framework.clamp(g_sphereCamRelPos.getZ(), 5.0f, g_sphereCamRelPos.getZ()));
     }
 
     class TreeData {
