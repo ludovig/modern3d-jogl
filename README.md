@@ -38,3 +38,6 @@ Get a list of available tutorials with command below
   - [x] Scale
   - [x] Rotation
   - [x] Hierarchy
+- [x] Chapter 7
+  - [x] World Space
+  - [x] Shared Uniforms

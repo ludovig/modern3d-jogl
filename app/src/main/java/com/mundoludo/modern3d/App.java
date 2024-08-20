@@ -55,5 +55,6 @@ public class App {
         System.out.println("\nTutorial 07");
         System.out.println("-----------");
         System.out.println("gradlew world_scene");
+        System.out.println("gradlew world_with_ubo");
     }
 }

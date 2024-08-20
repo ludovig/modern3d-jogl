@@ -1,42 +1,46 @@
 package com.mundoludo.modern3d.tut07;
 
+import com.mundoludo.modern3d.framework.Framework;
+import com.mundoludo.modern3d.framework.component.Mesh;
+import com.mundoludo.modern3d.framework.MatrixStack;
+
 import com.jogamp.newt.event.*;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.util.GLBuffers;
 
-import glm_.Java;
 import glm_.mat4x4.Mat4;
 import glm_.vec3.Vec3;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
+
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import org.xml.sax.SAXException;
 
+import static com.jogamp.opengl.GL3.GL_UNIFORM_BUFFER;
 import static com.jogamp.opengl.GL.GL_BACK;
 import static com.jogamp.opengl.GL.GL_CULL_FACE;
 import static com.jogamp.opengl.GL.GL_CW;
+import static com.jogamp.opengl.GL.GL_DEPTH_TEST;
+import static com.jogamp.opengl.GL.GL_LEQUAL;
+import static com.jogamp.opengl.GL2ES2.GL_STREAM_DRAW;
+import static com.jogamp.opengl.GL2ES3.*;
 import static com.jogamp.opengl.GL3.GL_DEPTH_CLAMP;
-import static com.jogamp.opengl.GL2ES2.*;
 
-import com.mundoludo.modern3d.framework.Framework;
-import com.mundoludo.modern3d.framework.component.Mesh;
-import com.mundoludo.modern3d.framework.MatrixStack;
-
-public class WorldScene extends Framework {
+public class WorldWithUBO extends Framework {
 
     public static void main(String[] args) {
-        new WorldScene().setup("Tutorial 07 - World Scene");
+        new WorldWithUBO().setup("Tutorial 07 - World With UBO");
     }
 
     class ProgramData {
         int theProgram;
         int modelToWorldMatrixUnif;
-        int worldToCameraMatrixUnif;
-        int cameraToClipMatrixUnif;
+        int globalUniformBlockIndex;
         int baseColorUnif;
 
         public ProgramData(GL3 gl, String strVertexShader, String strFragmentShader) {
@@ -51,32 +55,41 @@ public class WorldScene extends Framework {
             shaderList.forEach(gl::glDeleteShader);
 
             modelToWorldMatrixUnif = gl.glGetUniformLocation(theProgram, "modelToWorldMatrix");
-            worldToCameraMatrixUnif = gl.glGetUniformLocation(theProgram, "worldToCameraMatrix");
-            cameraToClipMatrixUnif = gl.glGetUniformLocation(theProgram, "cameraToClipMatrix");
+            globalUniformBlockIndex = gl.glGetUniformBlockIndex(theProgram, "GlobalMatrices");
             baseColorUnif = gl.glGetUniformLocation(theProgram, "baseColor");
+
+
+    	    gl.glUniformBlockBinding(theProgram, globalUniformBlockIndex, g_iGlobalMatricesBindingIndex);
         }
     }
 
-    private float zNear = 1f;
-    private float zFar = 1000.0f;
 
     private ProgramData UniformColor, ObjectColor, UniformColorTint;
+    private IntBuffer g_GlobalMatricesUBO = GLBuffers.newDirectIntBuffer(1);
 
     public static FloatBuffer MatBuffer = GLBuffers.newDirectFloatBuffer(16);
+    private static int g_iGlobalMatricesBindingIndex = 0;
 
     private void initializeProgram(GL3 gl) {
 	UniformColor = new ProgramData(gl,
-            "tut07/pos_only_world_transform.vert",
+            "tut07/pos_only_world_transform_UBO.vert",
             "tut07/color_uniform.frag"
         );
 	ObjectColor = new ProgramData(gl,
-            "tut07/pos_color_world_transform.vert",
+            "tut07/pos_color_world_transform_UBO.vert",
             "tut07/color_passthrough.frag"
         );
 	UniformColorTint = new ProgramData(gl,
-            "tut07/pos_color_world_transform.vert",
+            "tut07/pos_color_world_transform_UBO.vert",
             "tut07/color_uniform.frag"
         );
+
+        gl.glGenBuffers(1, g_GlobalMatricesUBO);
+	gl.glBindBuffer(GL_UNIFORM_BUFFER, g_GlobalMatricesUBO.get(0));
+	gl.glBufferData(GL_UNIFORM_BUFFER, Mat4.size * 2, null, GL_STREAM_DRAW);
+	gl.glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	gl.glBindBufferRange(GL_UNIFORM_BUFFER, g_iGlobalMatricesBindingIndex, g_GlobalMatricesUBO.get(0), 0, Mat4.size * 2);
     }
 
     Mat4 CalcLookAtMatrix(Vec3 cameraPt, Vec3 lookPt, Vec3 upPt)
@@ -419,13 +432,9 @@ public class WorldScene extends Framework {
 
         CalcLookAtMatrix(camPos, g_camTarget, new Vec3(0.0f, 1.0f, 0.0f)).to(MatBuffer);
 
-        gl.glUseProgram(UniformColor.theProgram);
-        gl.glUniformMatrix4fv(UniformColor.worldToCameraMatrixUnif, 1, false, MatBuffer);
-        gl.glUseProgram(ObjectColor.theProgram);
-        gl.glUniformMatrix4fv(ObjectColor.worldToCameraMatrixUnif, 1, false, MatBuffer);
-        gl.glUseProgram(UniformColorTint.theProgram);
-        gl.glUniformMatrix4fv(UniformColorTint.worldToCameraMatrixUnif, 1, false, MatBuffer);
-        gl.glUseProgram(0);
+        gl.glBindBuffer(GL_UNIFORM_BUFFER, g_GlobalMatricesUBO.get(0));
+        gl.glBufferSubData(GL_UNIFORM_BUFFER, Mat4.size, Mat4.size, MatBuffer);
+        gl.glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
         MatrixStack modelMatrix = new MatrixStack();
 
@@ -456,17 +465,13 @@ public class WorldScene extends Framework {
 
         if (g_bDrawLookatPoint) {
             gl.glDisable(GL_DEPTH_TEST);
-            Mat4 identity = new Mat4(1.0f);
-
-            Vec3 cameraAimVec = g_camTarget.minus(camPos);
 
             modelMatrix.push();
-            modelMatrix.translate(new Vec3(0.0f, 0.0f, - Java.glm.length(cameraAimVec)));
+            modelMatrix.translate(g_camTarget);
             modelMatrix.scale(new Vec3(1.0f, 1.0f, 1.0f));
 
             gl.glUseProgram(ObjectColor.theProgram);
             gl.glUniformMatrix4fv(ObjectColor.modelToWorldMatrixUnif, 1, false, modelMatrix.to(MatBuffer));
-            gl.glUniformMatrix4fv(ObjectColor.worldToCameraMatrixUnif, 1, false, identity.to(MatBuffer));
             g_pCubeColorMesh.render(gl);
             gl.glUseProgram(0);
             modelMatrix.pop();
@@ -476,17 +481,15 @@ public class WorldScene extends Framework {
 
     @Override
     protected void reshape(GL3 gl, int w, int h) {
+        float zNear = 1f;
+        float zFar = 1000.0f;
+
         MatrixStack persMatrix = new MatrixStack();
         persMatrix.perspective(45.0f, (w / (float) h), zNear, zFar);
 
-        gl.glUseProgram(UniformColor.theProgram);
-        gl.glUniformMatrix4fv(UniformColor.cameraToClipMatrixUnif, 1, false, persMatrix.to(MatBuffer));
-
-        gl.glUseProgram(ObjectColor.theProgram);
-        gl.glUniformMatrix4fv(ObjectColor.cameraToClipMatrixUnif, 1, false, persMatrix.to(MatBuffer));
-
-        gl.glUseProgram(UniformColorTint.theProgram);
-        gl.glUniformMatrix4fv(UniformColorTint.cameraToClipMatrixUnif, 1, false, persMatrix.to(MatBuffer));
+        gl.glBindBuffer(GL_UNIFORM_BUFFER, g_GlobalMatricesUBO.get(0));
+        gl.glBufferSubData(GL_UNIFORM_BUFFER, 0, Mat4.size, persMatrix.to(MatBuffer));
+        gl.glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
         gl.glViewport(0, 0, w, h);
     }

@@ -169,3 +169,9 @@ tasks.register<JavaExec>("world_scene") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut07.WorldScene")
 }
+tasks.register<JavaExec>("world_with_ubo") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut07.WorldWithUBO")
+}
