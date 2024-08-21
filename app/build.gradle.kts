@@ -175,3 +175,9 @@ tasks.register<JavaExec>("world_with_ubo") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut07.WorldWithUBO")
 }
+tasks.register<JavaExec>("gimbal_lock") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut08.GimbalLock")
+}

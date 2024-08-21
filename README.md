@@ -41,3 +41,5 @@ Get a list of available tutorials with command below
 - [x] Chapter 7
   - [x] World Space
   - [x] Shared Uniforms
+- [x] Chapter 8
+  - [x] Gimbal Lock
