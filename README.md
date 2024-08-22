@@ -43,3 +43,4 @@ Get a list of available tutorials with command below
   - [x] Shared Uniforms
 - [x] Chapter 8
   - [x] Gimbal Lock
+  - [x] Quaternion YPR

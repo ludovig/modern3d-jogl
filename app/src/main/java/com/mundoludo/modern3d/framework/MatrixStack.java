@@ -90,6 +90,12 @@ public class MatrixStack {
         return currMat;
     }
 
+    public Mat4 applyMatrix(Mat4 theMatrix) {
+        currMat.timesAssign(theMatrix);
+
+        return currMat;
+    }
+
     public void push() {
         matrices.push(new Mat4(currMat));
     }

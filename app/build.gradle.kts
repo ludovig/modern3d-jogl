@@ -181,3 +181,9 @@ tasks.register<JavaExec>("gimbal_lock") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut08.GimbalLock")
 }
+tasks.register<JavaExec>("quaternion_ypr") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut08.QuaternionYPR")
+}
