@@ -96,6 +96,12 @@ public class MatrixStack {
         return currMat;
     }
 
+    public Mat4 setMatrix(Mat4 theMatrix) {
+        currMat.put(theMatrix);
+
+        return currMat;
+    }
+
     public void push() {
         matrices.push(new Mat4(currMat));
     }

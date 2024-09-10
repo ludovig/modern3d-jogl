@@ -411,7 +411,7 @@ public class WorldWithUBO extends Framework {
         float fSinTheta = (float) Math.sin(theta);
         float fCosTheta = (float) Math.cos(theta);
         float fCosPhi = (float) Math.cos(phi);
-        float fSinPhi = (float) Math.cos(phi);
+        float fSinPhi = (float) Math.sin(phi);
 
         Vec3 dirToCamera = new Vec3(fSinTheta * fCosPhi, fCosTheta, fSinTheta * fSinPhi);
 

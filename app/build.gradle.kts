@@ -187,3 +187,9 @@ tasks.register<JavaExec>("quaternion_ypr") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut08.QuaternionYPR")
 }
+tasks.register<JavaExec>("camera_relative") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut08.CameraRelative")
+}

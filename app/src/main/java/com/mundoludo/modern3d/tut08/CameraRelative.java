@@ -26,10 +26,10 @@ import com.mundoludo.modern3d.framework.Framework;
 import com.mundoludo.modern3d.framework.component.Mesh;
 import com.mundoludo.modern3d.framework.MatrixStack;
 
-public class QuaternionYPR extends Framework {
+public class CameraRelative extends Framework {
 
     public static void main(String[] args) {
-        new QuaternionYPR().setup("Tutorial 08 - Quaternion YPR");
+        new CameraRelative().setup("Tutorial 08 - Camera Relative");
     }
 
     private int theProgram;
@@ -80,6 +80,7 @@ public class QuaternionYPR extends Framework {
     public static FloatBuffer MatBuffer = GLBuffers.newDirectFloatBuffer(16);
 
     Mesh g_pShip;
+    Mesh g_pPlane;
 
     @Override
     public void init(GL3 gl) {
@@ -87,8 +88,9 @@ public class QuaternionYPR extends Framework {
 
         try {
             g_pShip = new Mesh(gl, getClass(), "tut08/Ship.xml");
+            g_pPlane = new Mesh(gl, getClass(), "tut08/UnitPlane.xml");
         } catch (ParserConfigurationException | SAXException | IOException | URISyntaxException ex) {
-            System.err.println("Mesh loading failure in " + QuaternionYPR.class.getName());
+            System.err.println("Mesh loading failure in " + CameraRelative.class.getName());
             System.err.println(ex);
         }
 
@@ -102,7 +104,52 @@ public class QuaternionYPR extends Framework {
         gl.glDepthRangef(0.0f, 1.0f);
     }
 
+    Vec3 g_camTarget = new Vec3(0.0f, 10.0f, 0.0f);
     Quat g_orientation = new Quat(1.0f, 0.0f, 0.0f, 0.0f);
+
+    //In spherical coordinates.
+    Vec3 g_sphereCamRelPos = new Vec3(90.0f, 0.0f, 66.0f);
+
+    private Vec3 ResolveCamPosition()
+    {
+        float phi = Framework.degToRad(g_sphereCamRelPos.getX());
+        float theta = Framework.degToRad(g_sphereCamRelPos.getY() + 90.0f);
+
+        float fSinTheta = (float) Math.sin(theta);
+        float fCosTheta = (float) Math.cos(theta);
+        float fCosPhi = (float) Math.cos(phi);
+        float fSinPhi = (float) Math.sin(phi);
+
+        Vec3 dirToCamera = new Vec3(fSinTheta * fCosPhi, fCosTheta, fSinTheta * fSinPhi);
+
+        dirToCamera.timesAssign(g_sphereCamRelPos.getZ());
+        dirToCamera.plusAssign(g_camTarget);
+
+        return dirToCamera;
+    }
+
+    Mat4 CalcLookAtMatrix(Vec3 cameraPt, Vec3 lookPt, Vec3 upPt)
+    {
+        Vec3 lookDir = lookPt.minus(cameraPt).normalize();
+        Vec3 upDir = upPt.normalize();
+
+        Vec3 rightDir = lookDir.cross(upDir).normalize();
+        Vec3 perpUpDir = rightDir.cross(lookDir);
+
+        Mat4 rotMat = new Mat4(1.0f);
+        rotMat.set(0, rightDir, 0.0f);
+        rotMat.set(1, perpUpDir, 0.0f);
+        rotMat.set(2, lookDir.negate(), 0.0f);
+
+        rotMat = rotMat.transpose();
+
+        Mat4 transMat = new Mat4(1.0f);
+        transMat.set(3, cameraPt.negate(), 1.0f);
+
+        rotMat.timesAssign(transMat);
+
+        return rotMat;
+    }
 
     @Override
     public void display(GL3 gl) {
@@ -112,17 +159,35 @@ public class QuaternionYPR extends Framework {
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 
         MatrixStack currMatrix = new MatrixStack();
-        currMatrix.translate(new Vec3(0.0f, 0.0f, -200.0f));
-        currMatrix.applyMatrix(g_orientation.toMat4());
+        Vec3 camPos = ResolveCamPosition();
+        currMatrix.setMatrix(CalcLookAtMatrix(camPos, g_camTarget, new Vec3(0.0f, 1.0f, 0.0f)));
 
         gl.glUseProgram(theProgram);
-        currMatrix.scale(new Vec3(3.0f, 3.0f, 3.0f));
-        currMatrix.rotateX(-90);
-        //Set the base color for this object.
-        gl.glUniform4f(baseColorUnif, 1.0f, 1.0f, 1.0f, 1.0f);
-        gl.glUniformMatrix4fv(modelToCameraMatrixUnif, 1, false, currMatrix.to(MatBuffer));
+        {
+            currMatrix.push();
+            currMatrix.scale(new Vec3(100.0f, 1.0f, 100.0f));
 
-        g_pShip.render(gl, "tint");
+            gl.glUniform4f(baseColorUnif, 0.2f, 0.5f, 0.2f, 1.0f);
+            gl.glUniformMatrix4fv(modelToCameraMatrixUnif, 1, false, currMatrix.to(MatBuffer));
+
+            g_pPlane.render(gl);
+
+            currMatrix.pop();
+        }
+
+        {
+            currMatrix.push();
+            currMatrix.translate(g_camTarget);
+            currMatrix.applyMatrix(g_orientation.toMat4());
+            currMatrix.rotateX(-90.0f);
+
+            //Set the base color for this object.
+            gl.glUniform4f(baseColorUnif, 1.0f, 1.0f, 1.0f, 1.0f);
+            gl.glUniformMatrix4fv(modelToCameraMatrixUnif, 1, false, currMatrix.to(MatBuffer));
+
+            g_pShip.render(gl, "tint");
+            currMatrix.pop();
+        }
 
         gl.glUseProgram(0);
     }
@@ -149,10 +214,19 @@ public class QuaternionYPR extends Framework {
 
         gl.glDeleteProgram(theProgram);
 
+        g_pPlane.dispose(gl);
         g_pShip.dispose(gl);
     }
 
-    private boolean g_bRightMultiply = true;
+
+    private interface OffsetRelative {
+        int MODEL_RELATIVE = 0;
+        int WORLD_RELATIVE = 1;
+        int CAMERA_RELATIVE = 2;
+        int NUM_RELATIVES = 3;
+    }
+
+    private int g_iOffset = OffsetRelative.MODEL_RELATIVE;
 
     private void OffsetOrientation(Vec3 _axis, float fAngDeg) {
         float fAngRad = degToRad(fAngDeg);
@@ -165,10 +239,30 @@ public class QuaternionYPR extends Framework {
 
         Quat offset = new Quat(scalar, axis.getX(), axis.getY(), axis.getZ());
 
-        if(g_bRightMultiply)
-            g_orientation.timesAssign(offset);
-        else
-            g_orientation = offset.times(g_orientation);
+        switch(g_iOffset)
+        {
+            case OffsetRelative.MODEL_RELATIVE:
+                g_orientation.timesAssign(offset);
+                break;
+            case OffsetRelative.WORLD_RELATIVE:
+                g_orientation = offset.times(g_orientation);
+                break;
+            case OffsetRelative.CAMERA_RELATIVE:
+                {
+                    Vec3 camPos = ResolveCamPosition();
+                    Mat4 camMat = CalcLookAtMatrix(camPos, g_camTarget, new Vec3(0.0f, 1.0f, 0.0f));
+
+                    Quat viewQuat = camMat.toQuat();
+                    Quat invViewQuat = viewQuat.conjugate();
+
+                    Quat worldQuat = invViewQuat
+                        .times(offset)
+                        .times(viewQuat)
+                        ;
+                    g_orientation = worldQuat.times(g_orientation);
+                }
+                break;
+        }
 
         Java.glm.normalize(g_orientation, g_orientation);
     }
@@ -202,9 +296,38 @@ public class QuaternionYPR extends Framework {
                 break;
 
             case KeyEvent.VK_SPACE:
-                g_bRightMultiply = !g_bRightMultiply;
-                System.out.println(g_bRightMultiply ? "Right-multiply" : "Left-multiply");
+                g_iOffset += 1;
+                g_iOffset = g_iOffset % OffsetRelative.NUM_RELATIVES;
+                {
+                    switch(g_iOffset)
+                    {
+                        case OffsetRelative.MODEL_RELATIVE: System.out.println("Model Relative"); break;
+                        case OffsetRelative.WORLD_RELATIVE: System.out.println("World Relative"); break;
+                        case OffsetRelative.CAMERA_RELATIVE: System.out.println("Camera Relative"); break;
+                    }
+                }
+                break;
+
+            case KeyEvent.VK_I:
+                g_sphereCamRelPos.setY(g_sphereCamRelPos.getY() - (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_A:
+                g_sphereCamRelPos.setY(g_sphereCamRelPos.getY() + (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_S:
+                g_sphereCamRelPos.setX(g_sphereCamRelPos.getX() - (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_E:
+                g_sphereCamRelPos.setX(g_sphereCamRelPos.getX() + (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_X:
+                g_sphereCamRelPos.setZ(g_sphereCamRelPos.getZ() - (keyEvent.isShiftDown() ? 1.125f : 11.25f));
+                break;
+            case KeyEvent.VK_C:
+                g_sphereCamRelPos.setZ(g_sphereCamRelPos.getZ() + (keyEvent.isShiftDown() ? 1.125f : 11.25f));
                 break;
         }
+
+        g_sphereCamRelPos.setY(Java.glm.clamp(g_sphereCamRelPos.getY(), -78.75f, 10.0f));
     }
 }

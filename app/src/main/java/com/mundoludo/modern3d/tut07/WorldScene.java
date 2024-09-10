@@ -390,15 +390,13 @@ public class WorldScene extends Framework {
 
     private Vec3 ResolveCamPosition()
     {
-        MatrixStack tempMat = new MatrixStack();
-
         float phi = Framework.degToRad(g_sphereCamRelPos.getX());
         float theta = Framework.degToRad(g_sphereCamRelPos.getY() + 90.0f);
 
         float fSinTheta = (float) Math.sin(theta);
         float fCosTheta = (float) Math.cos(theta);
         float fCosPhi = (float) Math.cos(phi);
-        float fSinPhi = (float) Math.cos(phi);
+        float fSinPhi = (float) Math.sin(phi);
 
         Vec3 dirToCamera = new Vec3(fSinTheta * fCosPhi, fCosTheta, fSinTheta * fSinPhi);
 

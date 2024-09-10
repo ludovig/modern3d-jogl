@@ -229,24 +229,24 @@ public class GimbalLock extends Framework {
         float SMALL_ANGLE_INCREMENT = 9.0f;
 
         switch (keyEvent.getKeyCode()) {
-            case KeyEvent.VK_W:
+            case KeyEvent.VK_J:
                 g_angles.fAngleX += SMALL_ANGLE_INCREMENT;
                 break;
-            case KeyEvent.VK_S:
+            case KeyEvent.VK_K:
                 g_angles.fAngleX -= SMALL_ANGLE_INCREMENT;
                 break;
 
-            case KeyEvent.VK_A:
+            case KeyEvent.VK_L:
                 g_angles.fAngleY += SMALL_ANGLE_INCREMENT;
                 break;
-            case KeyEvent.VK_D:
+            case KeyEvent.VK_H:
                 g_angles.fAngleY -= SMALL_ANGLE_INCREMENT;
                 break;
 
-            case KeyEvent.VK_Q:
+            case KeyEvent.VK_N:
                 g_angles.fAngleZ += SMALL_ANGLE_INCREMENT;
                 break;
-            case KeyEvent.VK_E:
+            case KeyEvent.VK_F:
                 g_angles.fAngleZ -= SMALL_ANGLE_INCREMENT;
                 break;
 
