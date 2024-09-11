@@ -193,3 +193,9 @@ tasks.register<JavaExec>("camera_relative") {
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("com.mundoludo.modern3d.tut08.CameraRelative")
 }
+tasks.register<JavaExec>("interpolation") {
+    dependsOn("classes")
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.mundoludo.modern3d.tut08.Interpolation")
+}
