@@ -56,5 +56,11 @@ public class App {
         System.out.println("-----------");
         System.out.println("gradlew world_scene");
         System.out.println("gradlew world_with_ubo");
+        System.out.println("\nTutorial 08");
+        System.out.println("-----------");
+        System.out.println("gradlew gimbal_lock");
+        System.out.println("gradlew quaternion_ypr");
+        System.out.println("gradlew camera_relative");
+        System.out.println("gradlew interpolation");
     }
 }
